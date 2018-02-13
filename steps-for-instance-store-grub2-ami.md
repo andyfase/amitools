@@ -42,6 +42,7 @@ wget -qO- https://github.com/andyfase/amitools/raw/master/ami-tools.tar | tar --
 * We pass in a new parameter `--grub2` to to build the new image using grub2 tooling vs grub legacy
 * We over-ride the location of `ec2cert` which defaults to look within `/etc/amitools`
 * We add `/tmp/build` as a excluded directory for the rsync which occurs to the loopback mounted volume.
+* We include a bunch of paths to various ruby gems within the `/tmp/build` directory hierarchy as we are using the tooling outside of its normal install location
 
 
 ```
