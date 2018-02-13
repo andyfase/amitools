@@ -54,7 +54,8 @@ module EC2
                         arch = nil,
                         script = nil,
                         debug = false,
-                        grub_config = nil )
+                        grub_config = nil,
+                        grub2 = false )
           @volume = volume
           @image_filename = image_filename
           @mb_image_size = mb_image_size
@@ -65,6 +66,7 @@ module EC2
           @script = script
           @fstab = nil
           @conf = grub_config
+          @grub2 = grub2
           @warnings = Array.new
 
           self.verify_runtime(BASE_UTILS)
@@ -175,7 +177,7 @@ module EC2
             copy_rec( @volume, IMG_MNT)
             update_fstab
             customize_image
-            finalize_image
+            @grub2 ? finalize_image_grub2 : finalize_image
           ensure
             cleanup
           end
@@ -395,7 +397,8 @@ module EC2
               # Add a partition table and leave space to install a boot-loader.
               # The boot partition fills up the disk. Note that '-1s' indicates
               # the end of disk (and not 1 sector in from the end.
-              head = 63
+              # Note: Grub2 can have core.img larger than 64 blocks - increasing to 2048 for grub2
+              @grub2 ? head = 2047 : head = 63
               cmd << ['unit s']
               cmd << ['mklabel msdos']
               cmd << ['mkpart primary %s -1s' % head]
@@ -516,6 +519,15 @@ module EC2
           puts('Customizing cloned volume mounted at %s with script %s' % [IMG_MNT, @script])
           output = evaluate('%s "%s"' % [@script, IMG_MNT])
           STDERR.puts output if @debug
+        end
+
+        def finalize_image_grub2
+          return unless self.is_disk_image?
+          begin
+            puts('Performing grub2 install')
+            evaluate("chroot %s grub2-install --no-floppy --modules='biosdisk part_msdos ext2 xfs configfile normal multiboot' /dev/%s" % [IMG_MNT, File.basename(@diskloop)])
+            evaluate("chroot %s grub2-mkconfig -o /boot/grub2/grub.cfg" % IMG_MNT)
+          end
         end
 
         def finalize_image

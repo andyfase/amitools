@@ -180,7 +180,8 @@ class VolBundler < BundleTool
                                               p.arch,
                                               p.script,
                                               @debug,
-                                              p.grub_config)
+                                              p.grub_config,
+                                              p.grub2)
     image.make
 
     $stdout.puts 'Image file created: %s' % [image_file]

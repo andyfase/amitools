@@ -42,6 +42,7 @@ class BundleVolParameters < BundleMachineParameters
   INHERIT_DESCRIPTION       = ['Inherit instance metadata. Enabled by default.',
                                'Bundling will fail if inherit is enabled but instance data',
                                'is not accessible, for example not bundling an EC2 instance.']
+  GRUB2_DESCRIPTION         = 'Assume volume boots via grub2 vs grub'
 
   attr_accessor :all,
                 :exclude,
@@ -56,7 +57,8 @@ class BundleVolParameters < BundleMachineParameters
                 :clone_only,
                 :script,
                 :generate_fstab,
-                :grub_config
+                :grub_config,
+                :grub2
 
   def optional_params()
     super()
@@ -120,6 +122,10 @@ class BundleVolParameters < BundleMachineParameters
 
     on('--generate-fstab', *GENERATE_FSTAB_DESCRIPTION) do
       @generate_fstab = true
+    end
+
+    on('--grub2', *GRUB2_DESCRIPTION) do
+      @grub2 = true
     end
   end
 
