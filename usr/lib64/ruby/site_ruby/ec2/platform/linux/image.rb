@@ -194,6 +194,7 @@ module EC2
           paths.map! { |path| File.join(chroot, path) } if chroot
 
           utils.each do |util|
+            next if util == "grub" && @grub2
             unless paths.any? { |dir| File.executable?(File.join(dir, util)) }
               raise FatalError.new("Required utility '%s' not found in PATH - is it installed?" % util)
             end
