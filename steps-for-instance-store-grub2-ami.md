@@ -19,7 +19,7 @@
 
 ```
 mkdir -p /tmp/build/ruby
-sudo yum --installroot /tmp/build/ruby/ --releasever=7 -y instal
+sudo yum --installroot /tmp/build/ruby/ --releasever=7 -y install ruby.x86_64
 
 mkdir =p /tmp/build/utils
 sudo yum --installroot /tmp/build/utils/ --releasever=7 -y install parted
