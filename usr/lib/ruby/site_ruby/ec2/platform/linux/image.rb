@@ -334,7 +334,7 @@ module EC2
 
         def unmount(mpoint)
           if mounted?(mpoint) then
-              execute('umount -d ' + mpoint)
+              execute('umount -l -d ' + mpoint)
           end
         end
 
